@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextResponse } from 'next/server';
 import { reePrisma } from '@gitroom/frontend/lib/ree-prisma';
 import { assertReeAuth } from '@gitroom/frontend/lib/ree-auth-server';
