@@ -70,7 +70,7 @@ export default function ReeAgentChatPage() {
       setConversationId(null);
       return;
     }
-    const conv = client.conversations?.find(
+    const conv = (client as any).conversations?.find(
       (c: { agentType: string }) => c.agentType === agentType
     );
     if (conv) {
