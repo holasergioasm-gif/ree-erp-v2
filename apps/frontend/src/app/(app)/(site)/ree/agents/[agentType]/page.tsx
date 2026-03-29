@@ -148,7 +148,7 @@ export default function ReeAgentChatPage() {
   }, [clientId, lastAssistant, mutateClient]);
 
   const saveStrategy = useCallback(async () => {
-    if (!clientId || !lastAssistant || !client?.briefs?.[0]?.id) {
+    if (!clientId || !lastAssistant || !(client as any)?.briefs?.[0]?.id) {
       alert('Necesitás un brief primero.');
       return;
     }
@@ -161,7 +161,7 @@ export default function ReeAgentChatPage() {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...j, briefId: client.briefs[0].id }),
+      body: JSON.stringify({ ...j, briefId: (client as any).briefs[0].id }),
     });
     if (!res.ok) {
       alert(await res.text());
@@ -186,7 +186,7 @@ export default function ReeAgentChatPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...j,
-        strategyId: client?.strategies?.[0]?.id,
+        strategyId: (client as any)?.strategies?.[0]?.id,
       }),
     });
     if (!res.ok) {
