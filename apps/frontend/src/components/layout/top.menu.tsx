@@ -306,16 +306,55 @@ export const useMenuItem = () => {
     },
   ] satisfies MenuItemInterface[] as MenuItemInterface[];
 
+  const reeRobotIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="5" y="8" width="14" height="10" rx="2" />
+      <path d="M9 8V6a1 1 0 011-1h4a1 1 0 011 1v2" />
+      <circle cx="10" cy="13" r="1" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="13" r="1" fill="currentColor" stroke="none" />
+      <path d="M12 4v2M8 18v2M16 18v2" />
+    </svg>
+  );
+
+  const reeMenu = [
+    {
+      name: 'Agentes',
+      icon: reeRobotIcon,
+      path: '/ree',
+    },
+    {
+      name: 'Clientes',
+      icon: reeRobotIcon,
+      path: '/ree/clients',
+    },
+    {
+      name: 'Pipeline',
+      icon: reeRobotIcon,
+      path: '/ree/pipeline',
+    },
+  ] satisfies MenuItemInterface[] as MenuItemInterface[];
+
   return {
-    all: [...firstMenu, ...secondMenu],
+    all: [...firstMenu, ...secondMenu, ...reeMenu],
     firstMenu,
     secondMenu,
+    reeMenu,
   };
 };
 
 export const TopMenu: FC = () => {
   const user = useUser();
-  const { firstMenu, secondMenu } = useMenuItem();
+  const { firstMenu, secondMenu, reeMenu } = useMenuItem();
   const { isGeneral, billingEnabled } = useVariables();
   return (
     <>
@@ -378,6 +417,26 @@ export const TopMenu: FC = () => {
               onClick={item.onClick}
             />
           ))}
+      </div>
+      <div className="flex flex-col minCustom:gap-[8px] blurMe mt-[8px] pt-[8px] border-t border-newColColor">
+        <div className="text-[9px] font-[600] text-textItemBlur text-center px-[4px] leading-tight">
+          REE AGENCIA
+        </div>
+        {
+          // @ts-ignore
+          user?.orgId &&
+            // @ts-ignore
+            (user.tier !== 'FREE' || !isGeneral || !billingEnabled) &&
+            reeMenu.map((item) => (
+              <MenuItem
+                path={item.path}
+                label={item.name}
+                icon={item.icon}
+                key={item.name}
+                onClick={item.onClick}
+              />
+            ))
+        }
       </div>
     </>
   );

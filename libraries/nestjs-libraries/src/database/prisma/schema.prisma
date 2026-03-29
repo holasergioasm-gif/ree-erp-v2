@@ -957,3 +957,146 @@ model Announcement {
   color       AnnouncementColor @default(INFO)
   createdAt   DateTime          @default(now())
 }
+
+model ReeClient {
+  id              String               @id @default(cuid())
+  name            String
+  email           String               @unique
+  company         String?
+  industry        String?
+  contractType    ContractType         @default(MONTHLY)
+  status          ClientStatus         @default(ACTIVE)
+  pipelineStage   PipelineStage        @default(BRIEF_INTAKE)
+  stageUpdatedAt  DateTime             @default(now())
+  stageHistory    Json                 @default("[]")
+  paymentStatus   PaymentStatus        @default(PENDING)
+  paymentAmount   Float?
+  paymentCurrency String               @default("USD")
+  billingType     String?
+  platforms       Json                 @default("[]")
+  deliverables    Json                 @default("[]")
+  documents       Json                 @default("[]")
+  contextNotes    String?              @db.Text
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  conversations   AgentConversation[]
+  briefs          ClientBrief[]
+  strategies      ClientStrategy[]
+  scripts         ContentScript[]
+}
+
+model AgentConversation {
+  id        String             @id @default(cuid())
+  clientId  String
+  client    ReeClient          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agentType AgentType
+  messages  Json               @default("[]")
+  status    ConversationStatus @default(ACTIVE)
+  summary   String?            @db.Text
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model ClientBrief {
+  id             String           @id @default(cuid())
+  clientId       String
+  client         ReeClient        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  rawTranscript  String?          @db.Text
+  brandName      String?
+  brandVoice     String?          @db.Text
+  targetAudience String?          @db.Text
+  mainProduct    String?          @db.Text
+  competitors    Json             @default("[]")
+  goals          Json             @default("[]")
+  contentTypes   Json             @default("[]")
+  approvedAt     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  strategy       ClientStrategy?
+}
+
+model ClientStrategy {
+  id          String          @id @default(cuid())
+  clientId    String
+  client      ReeClient       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  briefId     String          @unique
+  brief       ClientBrief     @relation(fields: [briefId], references: [id])
+  insight     String?         @db.Text
+  claim       String?         @db.Text
+  slogan      String?         @db.Text
+  pillars     Json            @default("[]")
+  monthlyGoal String?         @db.Text
+  toneOfVoice String?         @db.Text
+  research    Json            @default("{}")
+  approvedAt  DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  scripts     ContentScript[]
+}
+
+model ContentScript {
+  id         String          @id @default(cuid())
+  clientId   String
+  client     ReeClient       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  strategyId String?
+  strategy   ClientStrategy? @relation(fields: [strategyId], references: [id])
+  platform   String
+  format     String
+  versionA   String?         @db.Text
+  versionB   String?         @db.Text
+  hook       String?         @db.Text
+  cta        String?         @db.Text
+  hashtags   Json            @default("[]")
+  status     ScriptStatus    @default(DRAFT)
+  approvedAt DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+enum ContractType {
+  MONTHLY
+  MODULAR
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PipelineStage {
+  BRIEF_INTAKE
+  ESTRATEGIA
+  VALIDACION
+  CALENDARIO
+  PRODUCCION
+  EVALUACION
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  PARTIAL
+}
+
+enum AgentType {
+  REE
+  AGUS
+  NUMBER_PI
+  AGENT_007
+  HIPPIE_VIRAL
+  PIXY
+}
+
+enum ConversationStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum ScriptStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  REJECTED
+}

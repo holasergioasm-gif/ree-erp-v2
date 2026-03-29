@@ -42,6 +42,7 @@
     "test": "jest --coverage --detectOpenHandles --reporters=default --reporters=jest-junit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.57.0",
     "@ag-ui/mastra": "0.2.0",
     "@ai-sdk/openai": "^2.0.52",
     "@atproto/api": "^0.15.15",
